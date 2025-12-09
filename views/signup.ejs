@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Criar Conta • VibeStream</title>
+    <style>
+        body { background-color: #000; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .box { background: #121212; padding: 40px; border-radius: 8px; width: 400px; }
+        h2 { text-align: center; margin-bottom: 5px; }
+        p.sub { text-align: center; color: #b3b3b3; font-size: 14px; margin-bottom: 30px; }
+
+        input[type="text"], input[type="email"] { width: 92%; padding: 12px; margin-bottom: 15px; background: #333; border: 1px solid #333; border-radius: 4px; color: white; }
+
+        .genres-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .genre-option { position: relative; }
+        .genre-option input { display: none; }
+        .genre-option label { display: block; padding: 10px; background: #2a2a2a; border-radius: 5px; text-align: center; cursor: pointer; font-size: 13px; border: 2px solid transparent; transition: 0.2s;}
+
+        /* Efeito de seleção visual */
+        .genre-option input:checked + label { border-color: #1db954; background: #1db954; color: black; font-weight: bold; }
+
+        button { width: 100%; padding: 14px; background: #1db954; border: none; border-radius: 25px; color: #000; font-weight: bold; cursor: pointer; font-size: 14px; text-transform: uppercase;}
+        a { color: #b3b3b3; text-decoration: none; font-size: 12px; display: block; margin-top: 20px; text-align: center;}
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Criar Perfil</h2>
+        <p class="sub">Configure seu gosto musical para começarmos.</p>
+
+        <form action="/signup" method="POST">
+            <label style="font-size: 12px; color: #b3b3b3;">Nome de exibição</label>
+            <input type="text" name="nome" placeholder="Ex: João Silva" required>
+
+            <label style="font-size: 12px; color: #b3b3b3;">Seu melhor e-mail</label>
+            <input type="email" name="email" placeholder="nome@exemplo.com" required>
+
+            <label style="font-size: 12px; color: #b3b3b3; display:block; margin-bottom: 10px; margin-top: 10px;">O que você curte ouvir?</label>
+            <div class="genres-grid">
+                <div class="genre-option"><input type="checkbox" id="rock" name="generos" value="Rock"><label for="rock">🎸 Rock</label></div>
+                <div class="genre-option"><input type="checkbox" id="pop" name="generos" value="Pop"><label for="pop">🎤 Pop</label></div>
+                <div class="genre-option"><input type="checkbox" id="sert" name="generos" value="Sertanejo"><label for="sert">🤠 Sertanejo</label></div>
+                <div class="genre-option"><input type="checkbox" id="hip" name="generos" value="HipHop"><label for="hip">🧢 Hip Hop</label></div>
+                <div class="genre-option"><input type="checkbox" id="ele" name="generos" value="Eletronica"><label for="ele">🎧 Eletrônica</label></div>
+                <div class="genre-option"><input type="checkbox" id="indie" name="generos" value="Indie"><label for="indie">🏕️ Indie</label></div>
+            </div>
+
+            <button type="submit">Finalizar Cadastro</button>
+        </form>
+        <a href="/login">Já tem conta? Fazer Login</a>
+    </div>
+</body>
+</html>
