@@ -33,10 +33,12 @@ const MusicaSchema = new mongoose.Schema({
 });
 const Musica = mongoose.model('Musica', MusicaSchema);
 
+// [MODIFICADO] Adicionado artistasFavoritos no Schema
 const UsuarioSchema = new mongoose.Schema({
     login: String, senha: String, nome: String,
     generosPreferidos: [String],
-    favoritas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Musica' }]
+    favoritas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Musica' }],
+    artistasFavoritos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Artista' }]
 });
 const Usuario = mongoose.model('Usuario', UsuarioSchema);
 
@@ -58,20 +60,22 @@ app.get('/signup', (req, res) => res.render('signup'));
 app.post('/signup', async (req, res) => {
     const { nome, login, senha, generos } = req.body;
     let lista = generos || []; if (!Array.isArray(lista)) lista = [lista];
-    const user = await Usuario.create({ nome, login, senha, generosPreferidos: lista, favoritas: [] });
+    const user = await Usuario.create({ nome, login, senha, generosPreferidos: lista, favoritas: [], artistasFavoritos: [] });
     req.session.userId = user._id; res.redirect('/');
 });
 
 // --- ROTAS PRINCIPAIS ---
 
-// 1. HOME (CORRIGIDA)
+// 1. HOME (CORRIGIDA E ATUALIZADA)
 app.get('/', requireLogin, async (req, res) => {
     const usuario = await Usuario.findById(req.session.userId).populate('favoritas');
     const todas = await Musica.find().populate('artista').sort({ titulo: 1 });
 
-    // --- CORREÇÃO DO FAVORITAR ---
-    // Criamos uma lista SIMPLES de IDs (Strings) para o frontend saber o que pintar de verde
+    // Lista SIMPLES de IDs (Strings)
     const idsFavoritos = usuario.favoritas.map(f => f._id.toString());
+
+    // [MODIFICADO] Lista de IDs de Artistas Favoritos
+    const idsArtistasFavoritos = (usuario.artistasFavoritos || []).map(a => a.toString());
 
     // Algoritmo de Recomendação
     let generosInteresse = new Set(usuario.generosPreferidos);
@@ -84,10 +88,10 @@ app.get('/', requireLogin, async (req, res) => {
         !idsFavoritos.includes(m._id.toString())
         );
 
-        res.render('index', { page: 'home', usuario, musicas: todas, recomendacoes: recs, idsFavoritos });
+        res.render('index', { page: 'home', usuario, musicas: todas, recomendacoes: recs, idsFavoritos, idsArtistasFavoritos });
 });
 
-// 2. BUSCA (CORRIGIDA)
+// 2. BUSCA (CORRIGIDA E ATUALIZADA)
 app.get('/search', requireLogin, async (req, res) => {
     const usuario = await Usuario.findById(req.session.userId);
     const query = req.query.q;
@@ -96,10 +100,12 @@ app.get('/search', requireLogin, async (req, res) => {
         resultados = await Musica.find({ titulo: { $regex: query, $options: 'i' } }).populate('artista');
     }
 
-    // Gera a lista de IDs para verificar os botões
     const idsFavoritos = usuario.favoritas.map(f => f.toString());
 
-    res.render('index', { page: 'search', usuario, resultados, query, idsFavoritos });
+    // [MODIFICADO] Lista de IDs de Artistas Favoritos
+    const idsArtistasFavoritos = (usuario.artistasFavoritos || []).map(a => a.toString());
+
+    res.render('index', { page: 'search', usuario, resultados, query, idsFavoritos, idsArtistasFavoritos });
 });
 
 // 3. BIBLIOTECA
@@ -128,22 +134,34 @@ app.post('/update-genres', requireLogin, async (req, res) => {
     res.redirect('/profile');
 });
 
-// AÇÃO DE FAVORITAR (CORRIGIDA E MAIS SEGURA)
+// AÇÃO DE FAVORITAR MÚSICA
 app.post('/favoritar/:id', requireLogin, async (req, res) => {
     const usuario = await Usuario.findById(req.session.userId);
     const id = req.params.id;
 
-    // Verifica se já existe convertendo tudo para string para evitar erro
     const jaTem = usuario.favoritas.some(f => f.toString() === id);
 
     if (jaTem) {
-        // Remove (Pull)
         usuario.favoritas.pull(id);
     } else {
-        // Adiciona (Push)
         usuario.favoritas.push(id);
     }
 
+    await usuario.save();
+    res.redirect(req.query.return || '/');
+});
+
+// [MODIFICADO] AÇÃO DE FAVORITAR ARTISTA (BANDA)
+app.post('/favoritar-artista/:id', requireLogin, async (req, res) => {
+    const usuario = await Usuario.findById(req.session.userId);
+    const id = req.params.id;
+    const jaTem = usuario.artistasFavoritos.some(a => a.toString() === id);
+
+    if (jaTem) {
+        usuario.artistasFavoritos.pull(id); // Remove se já segue
+    } else {
+        usuario.artistasFavoritos.push(id); // Adiciona se não segue
+    }
     await usuario.save();
     res.redirect(req.query.return || '/');
 });

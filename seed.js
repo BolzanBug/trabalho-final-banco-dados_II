@@ -18,9 +18,11 @@ const Musica = mongoose.model('Musica', {
     capa: String
 });
 
+// [MODIFICADO] Adicionado artistasFavoritos
 const Usuario = mongoose.model('Usuario', {
     login: String, senha: String, nome: String, generosPreferidos: [String],
-    favoritas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Musica' }]
+    favoritas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Musica' }],
+    artistasFavoritos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Artista' }]
 });
 
 const popular = async () => {
@@ -173,10 +175,12 @@ const popular = async () => {
         const fav2 = musicasDB.find(m => m.titulo.includes("Evidências"))._id;
         const fav3 = musicasDB.find(m => m.titulo.includes("Tempo Perdido"))._id;
 
+        // [MODIFICADO] Adicionado artistasFavoritos: []
         await Usuario.create({
             nome: "Matheus Bolzan", login: "Bolzan", senha: "1qaz",
             generosPreferidos: ["Rock", "Sertanejo", "Eletronica"],
-            favoritas: [fav1, fav2, fav3]
+            favoritas: [fav1, fav2, fav3],
+            artistasFavoritos: []
         });
 
         console.log("✅ TUDO PRONTO! Banco atualizado com links seguros.");
