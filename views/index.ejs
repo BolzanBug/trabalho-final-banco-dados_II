@@ -7,13 +7,37 @@
         /* ESTILOS */
         * { box-sizing: border-box; }
         body { background-color: #000; color: #fff; margin: 0; display: flex; height: 100vh; overflow: hidden; font-family: 'Montserrat', sans-serif; }
-        .sidebar { width: 250px; background: #000; padding: 25px; display: flex; flex-direction: column; border-right: 1px solid #1a1a1a; flex-shrink: 0; }
+
+        /* CORREÇÃO DO LAYOUT */
+        .sidebar {
+            width: 250px;
+            background: #000;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #1a1a1a;
+            flex-shrink: 0;
+            /* Garante que o menu fique visível acima do player se faltar espaço */
+            position: relative;
+            z-index: 150;
+            padding-bottom: 100px; /* Espaço extra para o player não cobrir o logout */
+        }
+
         .logo { font-size: 26px; font-weight: 800; margin-bottom: 40px; color: #fff; display:flex; align-items:center; gap:10px;}
         .logo span { color: #1db954; font-size:30px;}
         .menu-item { text-decoration: none; color: #b3b3b3; font-weight: 600; font-size: 14px; padding: 12px 0; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
         .menu-item:hover, .menu-item.active { color: #fff; }
         .menu-item.active { border-right: 3px solid #1db954; }
-        .main { flex: 1; padding: 30px 50px; overflow-y: auto; position: relative; background: linear-gradient(180deg, #202020 0%, #121212 40%); padding-bottom: 120px; }
+
+        .main {
+            flex: 1;
+            padding: 30px 50px;
+            overflow-y: auto;
+            position: relative;
+            background: linear-gradient(180deg, #202020 0%, #121212 40%);
+            padding-bottom: 120px;
+        }
+
         h1, h2 { letter-spacing: -0.5px; }
         h2 { font-size: 22px; margin-top: 30px; margin-bottom: 20px; }
         .card-grid { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; }
@@ -35,7 +59,22 @@
         .btn-fav.saved:hover { background: #1ed760; }
         .btn-fav.remove { background: transparent; border-color: #ff5555; color: #ff5555; }
         .btn-fav.remove:hover { background: #ff5555; color: white; }
-        .player-bar { position: fixed; bottom: 0; left: 0; width: 100%; height: 90px; background: #181818; border-top: 1px solid #282828; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; }
+
+        .player-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 90px;
+            background: #181818;
+            border-top: 1px solid #282828;
+            z-index: 100; /* Fica abaixo do sidebar se ele precisar sobrepor */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
         .progress-bar { width: 100%; height: 4px; background: #555; border-radius: 2px; }
         .progress-fill { width: 30%; height: 100%; background: #fff; border-radius: 2px; }
         .search-input { width: 100%; padding: 15px 25px; border-radius: 50px; border: none; font-size: 16px; margin-bottom: 30px; outline: none; }
@@ -52,7 +91,7 @@
         <div style="margin-top: auto; border-top: 1px solid #333; padding-top: 20px;">
             <div style="font-size: 13px; color: #999;">Logado como</div>
             <div style="font-weight: bold; margin-bottom: 10px;"><%= usuario.nome %></div>
-            <a href="/logout" style="color:#b3b3b3; text-decoration:none; font-size: 12px;">Sair da conta</a>
+            <a href="/logout" style="color:#b3b3b3; text-decoration:none; font-size: 12px; display: block; padding: 5px 0;">Sair da conta</a>
         </div>
     </div>
 
