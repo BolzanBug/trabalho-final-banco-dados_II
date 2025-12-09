@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Minha Playlist NoSQL</h1>
+
+    <form action="/adicionar" method="POST">
+        <input type="text" name="titulo" placeholder="Nome da Música" required>
+        <input type="text" name="artista" placeholder="Artista" required>
+        <input type="text" name="genero" placeholder="Gênero">
+        <button type="submit">Salvar</button>
+    </form>
+
+    <hr>
+
+    <ul>
+        <% musicas.forEach(musica => { %>
+            <li>🎵 <b><%= musica.titulo %></b> - <%= musica.artista %> (<%= musica.genero %>)</li>
+        <% }) %>
+    </ul>
+</body>
+</html>
